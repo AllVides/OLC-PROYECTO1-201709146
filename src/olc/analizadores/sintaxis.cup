@@ -1,0 +1,36 @@
+package olc.analizadores; 
+import java_cup.runtime.*;
+
+parser code 
+{:
+    //Codigo que se le agrega al parser
+
+    //Codigo para Errores Sintacticos
+    public void syntax_error(Symbol s){ 
+        System.out.println("Error SintÃ¡ctico en la LÃ­nea " + (s.left) +
+        " Columna "+s.right+ ". No se esperaba este componente: " +s.value+"."); 
+    } 
+
+    //Codigo para errores que ya no se pueden recuperar
+    public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception{ 
+        System.out.println("Error sÃ­ntactico irrecuperable en la LÃ­nea " + 
+        (s.left)+ " Columna "+s.right+". Componente " + s.value + 
+        " no reconocido."); 
+    }  
+:} 
+
+terminal String conj, tld, detail, assign, separate, end;
+terminal String entero;
+terminal String palabra;
+
+non terminal INICIO;
+non terminal FOLLOW;
+
+start with INICIO;
+
+INICIO::=FOLLOW:var1 {:System.out.println(var1);:};
+
+FOLLOW  ::= 
+ |  conj    detail  palabra:val1   assign  entero:val2 end FOLLOW:var1     {:RESULT=val1+" es "+val2;:}
+ |  separate                                               {:RESULT=new String("fin");:}
+;
