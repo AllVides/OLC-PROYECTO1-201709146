@@ -16,19 +16,26 @@ import java_cup.runtime.Symbol;
 %init} 
 
 BLANCOS=[ \r\t\n]+
-COMENT= "//"([0-9]|[A-Za-z])* 
+COMENT= "//"("/"|[0-9]|[A-Za-z])* 
 D=[0-9]+
-S= ("+" | "*" | "." | "|" | "?")?
+
 L = ([A-Za-z])+
 
 %%
 
+"{" {return new Symbol(sym.open, yyline, yychar, yytext());}
+"}" {return new Symbol(sym.close, yyline, yychar, yytext());}
 "CONJ" {return new Symbol(sym.conj,yyline,yychar, yytext());} 
-"tld" {return new Symbol(sym.tld,yyline,yychar, yytext());} 
 ":" {return new Symbol(sym.detail,yyline,yychar, yytext());} 
 ""*"->"""* {return new Symbol(sym.assign,yyline,yychar, yytext());} 
 "%%" {return new Symbol(sym.separate,yyline,yychar, yytext());} 
 ";" {return new Symbol(sym.end, yyline,yychar, yytext());}
+
+"+" {return new Symbol(sym.unomas, yyline, yychar, yytext());}
+"*" {return new Symbol(sym.ceromas, yyline, yychar, yytext());}
+"." {return new Symbol(sym.conc, yyline, yychar, yytext());}
+"?" {return new Symbol(sym.cerouno, yyline, yychar, yytext());}
+"|" {return new Symbol(sym.estot, yyline, yychar, yytext());}
 
 \n {yychar=1;}
 

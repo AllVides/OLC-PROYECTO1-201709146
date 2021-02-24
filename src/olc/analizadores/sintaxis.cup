@@ -19,18 +19,37 @@ parser code
     }  
 :} 
 
-terminal String conj, tld, detail, assign, separate, end;
-terminal String entero;
+terminal String conj, detail, assign, separate, end, open, close,
+        unomas, ceromas, conc, cerouno, estot;
 terminal String palabra;
 
 non terminal INICIO;
-non terminal FOLLOW;
+non terminal ABC;
+non terminal INP;
+non terminal EXP;
+
 
 start with INICIO;
 
-INICIO::=FOLLOW:var1 {:System.out.println(var1);:};
+INICIO::=ABC;
 
-FOLLOW  ::= 
- |  conj    detail  palabra:val1   assign  entero:val2 end FOLLOW:var1     {:RESULT=val1+" es "+val2;:}
- |  separate                                               {:RESULT=new String("fin");:}
+ABC  ::= open ABC
+    |  conj    detail  palabra   assign  palabra end ABC
+    |  palabra assign  EXP end ABC
+    |  separate separate INP
+
 ;
+
+INP ::=palabra detail palabra end INP
+ |  close
+;
+
+
+EXP ::= cerouno EXP
+ |  unomas EXP
+ |  ceromas EXP 
+ |  conc EXP EXP
+ |  estot EXP EXP
+ |  palabra
+;
+

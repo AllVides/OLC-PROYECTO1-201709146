@@ -21,7 +21,7 @@ public class Main {
         // TODO code application logic here
          try {
             parser sintactico;
-            sintactico = new parser(new lexico(new StringReader("CONJ:daefef->958558 ;")));
+            sintactico = new parser(new lexico(new StringReader("//aajjaja\nCONJ:daefef->958558 ;")));
             sintactico.parse();
         } catch (Exception e) {
             e.printStackTrace();

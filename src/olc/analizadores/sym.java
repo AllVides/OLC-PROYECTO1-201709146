@@ -8,26 +8,36 @@ package olc.analizadores;
 /** CUP generated class containing symbol constants. */
 public class sym {
   /* terminals */
-  public static final int palabra = 9;
-  public static final int tld = 3;
-  public static final int end = 7;
+  public static final int palabra = 14;
+  public static final int cerouno = 12;
+  public static final int unomas = 9;
+  public static final int end = 6;
   public static final int conj = 2;
   public static final int EOF = 0;
-  public static final int detail = 4;
-  public static final int entero = 8;
-  public static final int separate = 6;
+  public static final int open = 7;
+  public static final int detail = 3;
+  public static final int separate = 5;
   public static final int error = 1;
-  public static final int assign = 5;
+  public static final int conc = 11;
+  public static final int estot = 13;
+  public static final int ceromas = 10;
+  public static final int close = 8;
+  public static final int assign = 4;
   public static final String[] terminalNames = new String[] {
   "EOF",
   "error",
   "conj",
-  "tld",
   "detail",
   "assign",
   "separate",
   "end",
-  "entero",
+  "open",
+  "close",
+  "unomas",
+  "ceromas",
+  "conc",
+  "cerouno",
+  "estot",
   "palabra"
   };
 }
