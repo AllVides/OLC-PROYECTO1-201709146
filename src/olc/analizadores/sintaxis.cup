@@ -20,8 +20,9 @@ parser code
 :} 
 
 terminal String conj, detail, assign, separate, end, open, close,
-        unomas, ceromas, conc, cerouno, estot;
-terminal String palabra;
+        unomas, ceromas, conc, cerouno, estot,
+        salli, comidob, comi, fromto,coma;
+terminal String palabra, esp;
 
 non terminal INICIO;
 non terminal ABC;
@@ -36,7 +37,7 @@ INICIO::=ABC;
 ABC  ::= open ABC
     |  conj    detail  palabra   assign  palabra end ABC
     |  palabra assign  EXP end ABC
-    |  separate separate INP
+    |  separate salli separate INP
 
 ;
 
@@ -51,5 +52,8 @@ EXP ::= cerouno EXP
  |  conc EXP EXP
  |  estot EXP EXP
  |  palabra
+ |  open palabra close
+ |  comi esp comi
+ |  comidob esp comidob
 ;
 
