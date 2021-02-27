@@ -5,8 +5,13 @@
  */
 package olc.main;
 
+import java.io.FileWriter;
+import java.io.PrintWriter;
 import java.io.StringReader;
+import java.util.HashMap;
+import java.util.Map;
 import olc.analizadores.*;
+import olc.funciones.*;
 
 /**
  *
@@ -20,12 +25,73 @@ public class Main {
     public static void main(String[] args) {
         // TODO code application logic here
          try {
-            parser sintactico;
-            sintactico = new parser(new lexico(new StringReader("//aajjaja\nCONJ:daefef->958558 ;")));
-            sintactico.parse();
+            parser sintaxis;
+            sintaxis = new parser(new lexico(new StringReader("{\n" +
+        "CONJ: letra -> a~z; \n"+
+                   "CONJ: letra -> a,b,c; \n"+
+        "////HOla "+
+        
+        "ExpReg1 -> . {letra} * | \"_\" | {letra} {digito}; \n" +
+        
+        "RegEx3 -> . {digito} * | \"_\" | {letra} {digito};\n" +
+        "%%\n" +
+        "%%\n" +
+        "ExpReg1 : \"primerLexemaCokoa\"; \n" +
+        "\n}")));
+            sintaxis.parse();
+            try{
+            graficarArbol(sintaxis.map.get("RegEx3").raiz,"arbolito1");
+            }catch(Exception r){r.printStackTrace();}
+            //graficarArbol(sintaxis.map.get("ExpresionReg2").raiz,"arbolito2");
+            //graficarArbol(sintaxis.map.get("RegEx3").raiz,"arbolito3");
+            System.out.println("Hola");
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+        
+        public static void graficarArbol(Nodo act, String nombre){
+        FileWriter fichero = null;
+        PrintWriter pw = null;
+        try {
+            fichero = new FileWriter("./" + nombre + ".dot");
+            pw = new PrintWriter(fichero);
+            pw.println("digraph G{");
+            pw.println("rankdir=UD");
+            pw.println("node[shape=box]");
+            pw.println("concentrate=true");
+            pw.println(act.getCodigoInterno());
+            pw.println("}");
+        } catch (Exception e) {
+            System.out.println("error, no se realizo el archivo");
+        } finally {
+            try {
+                if (null != fichero) {
+                    fichero.close();
+                }
+            } catch (Exception e2) {
+                e2.printStackTrace();
+            }
+        }
+        try
+		{       
+			ProcessBuilder pbuilder;
+		    
+			/*
+			 * Realiza la construccion del comando    
+			 * en la linea de comandos esto es: 
+			 * dot -Tpng -o archivo.png archivo.dot
+			 */
+			pbuilder = new ProcessBuilder( "dot", "-Tpng", "-o", "./" + nombre + ".png", "./" + nombre + ".dot" );
+			pbuilder.redirectErrorStream( true );
+			//Ejecuta el proceso
+			pbuilder.start();
+		    
+		} catch (Exception e) { e.printStackTrace(); }
+        //para compilar el archivo dot y obtener la imagen
+        
+       
+         
     }
     
 }

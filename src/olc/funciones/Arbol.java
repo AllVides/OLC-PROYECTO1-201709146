@@ -5,48 +5,40 @@
  */
 package olc.funciones;
 
+import java.util.ArrayList;
+import java.util.List;
+import olc.funciones.Nodo;
+
 /**
  *
  * @author Lenovo
  */
 public class Arbol {
     public Nodo raiz;
+    public int contador = 1;
     
-    public Arbol (Nodo raiz){
+    public Arbol (){
+    }
+    
+    public void setRaiz(Nodo raiz){
         this.raiz = raiz;
     }
-    public void insert(){
-        
+    public Nodo getRaiz(){
+        return this.raiz;
     }
+    
+    public void isNulable(){
+        isNulable(this.raiz);
+    }
+    public void isNulable(Nodo nodo){
+        if(nodo.hizq != null){
+            isNulable(nodo.hizq);}
+        if(nodo.hizq != null){
+            isNulable(nodo.hder);}
+        nodo.isNulable();
+    }
+    
 }
 
-class Nodo{
-    public Nodo hizq;
-    public Nodo hder;
-    public String valor;
-    public int id;
-    
-    public Nodo(Nodo hizq, Nodo hder, String valor, int id){
-        this.hizq=hizq;
-        this.hder=hder;
-        this.valor=valor;
-        this.id=id;
-    }
-    
-    public String getCodigoInterno(){
-        String etiqueta="";
-        if(hizq==null && hder==null){
-            etiqueta = "nodo"+id+"[label=\""+valor+"\"];\n";
-        }
-        else {
-            etiqueta = "nodo" + id + " [ label =\"" + valor + "\"];\n";
-        }
-        if(hizq !=null){
-            etiqueta+=hizq.getCodigoInterno()+"nodo"+id+"->nodo"+hizq.id+";\n";
-        }
-        if(hder!=null){
-            etiqueta+=hder.getCodigoInterno()+"nodo"+id+"->nodo"+hder.id+";\n";
-        }
-        return etiqueta;
-    }
-}
+
+

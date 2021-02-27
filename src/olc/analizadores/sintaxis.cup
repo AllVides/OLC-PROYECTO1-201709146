@@ -1,59 +1,79 @@
 package olc.analizadores; 
 import java_cup.runtime.*;
+import olc.funciones.*;
+import java.util.HashMap;
+import java.util.Map;
 
 parser code 
 {:
     //Codigo que se le agrega al parser
+    public static Map<String, Arbol> map = new HashMap<String, Arbol>();
+    public static Arbol arbolito = new Arbol();
+    public int contador = 1;
 
     //Codigo para Errores Sintacticos
-    public void syntax_error(Symbol s){ 
-        System.out.println("Error SintÃ¡ctico en la LÃ­nea " + (s.left) +
-        " Columna "+s.right+ ". No se esperaba este componente: " +s.value+"."); 
-    } 
-
-    //Codigo para errores que ya no se pueden recuperar
-    public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception{ 
-        System.out.println("Error sÃ­ntactico irrecuperable en la LÃ­nea " + 
-        (s.left)+ " Columna "+s.right+". Componente " + s.value + 
-        " no reconocido."); 
+    public void syntax_error(Symbol s)
+    {
+        System.err.println("Error en la Linea " + (s.right+1) +" Columna "+(s.left+1)+ ". Identificador "+s.value + " no reconocido. Se ha recuperado del error." );
+        
+        
+    }
+    public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception
+    {
+        System.err.println("Error en la Linea " + (s.right+1)+ " Columna "+(s.left+1)+". Identificador " +s.value + " no reconocido.");
+        
+        
     }  
 :} 
 
-terminal String conj, detail, assign, separate, end, open, close,
+terminal String conj, detail, assign, separate, end, open, clos,
         unomas, ceromas, conc, cerouno, estot,
         salli, comidob, comi, fromto,coma;
-terminal String palabra, esp;
+terminal String palabra, esp, epx;
 
 non terminal INICIO;
 non terminal ABC;
 non terminal INP;
-non terminal EXP;
+non terminal Nodo EXP;
+non terminal CONJ;
 
-
+precedence left conc;
 start with INICIO;
 
 INICIO::=ABC;
 
 ABC  ::= open ABC
-    |  conj    detail  palabra   assign  palabra end ABC
-    |  palabra assign  EXP end ABC
-    |  separate salli separate INP
+    |  conj    detail  palabra   assign  CONJ end ABC
+    |  palabra:nombre assign  EXP:var1 end ABC     {:System.out.println(nombre);parser.map.put(nombre, new Arbol());
+                                                parser.map.get(nombre).setRaiz(new Nodo(var1,new Nodo(null, null, "#", parser.contador),".",parser.contador));
+                                                parser.contador++;:}
+    |  separate separate separate separate INP
 
 ;
 
-INP ::=palabra detail palabra end INP
- |  close
+CONJ ::= palabra CONJ
+    |coma palabra CONJ
+    |
+    |fromto palabra
+
+;
+
+INP ::=palabra detail comidob palabra comidob end INP
+    |clos 
+    |
+
 ;
 
 
-EXP ::= cerouno EXP
- |  unomas EXP
- |  ceromas EXP 
- |  conc EXP EXP
- |  estot EXP EXP
- |  palabra
- |  open palabra close
- |  comi esp comi
- |  comidob esp comidob
-;
+EXP ::= cerouno EXP:var1    {:RESULT= new Nodo(var1, null, "?", parser.contador); parser.contador++;:}
+ |  unomas EXP:var1         {:RESULT= new Nodo(var1, null, "+", parser.contador); parser.contador++;:}
+ |  ceromas EXP:var1        {:RESULT= new Nodo(var1, null, "*", parser.contador); parser.contador++;:}
+ |  conc EXP:var1 EXP:var2  {:RESULT= new Nodo(var1, var2, ".", parser.contador); parser.contador++;:}
+ |  estot EXP:var1 EXP:var2 {:RESULT= new Nodo(var1, var2, "|", parser.contador); parser.contador++;:}
+ |  palabra:simbolo                 {:RESULT= new Nodo(null, null, simbolo, parser.contador); parser.contador++;:}
+ |  open palabra:simbolo clos      {:RESULT= new Nodo(null, null, simbolo, parser.contador); parser.contador++;:}
+ |  comi palabra:simbolo comi           {:RESULT= new Nodo(null, null, simbolo, parser.contador); parser.contador++;:}
+ |  comidob esp:simbolo comidob     {:RESULT= new Nodo(null, null, simbolo, parser.contador); parser.contador++;:}
+ |error;
+
 
