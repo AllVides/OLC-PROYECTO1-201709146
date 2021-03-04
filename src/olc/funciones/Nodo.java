@@ -27,9 +27,9 @@ public class Nodo {
         this.hder=hder;
         this.valor=valor;
         this.id=id;
-        //this.isNulable();
-        //this.setPrimeros();
-        //this.setUltimos();
+        this.isNulable();
+        this.setPrimeros();
+        this.setUltimos();
     }
     
     
@@ -92,11 +92,15 @@ public class Nodo {
     
     public String getCodigoInterno(){
         String etiqueta="";
+        String pri = String.join(",", this.primeros);
+        String ult = String.join(",", this.ultimos);
+        String valor = (this.valor.equals("|"))?"\\|":this.valor;
+        
         if(hizq==null && hder==null){
-            etiqueta = "nodo"+id+"[label=\""+valor+"\"];\n";
+            etiqueta = "nodo"+id+"[label=\"<f0> "+pri+"|{<f1>"+this.nulable+" |<f2> "+valor+"|<f3> id: "+this.id+"}|<f5>"+ult+"\"];\n";
         }
         else {
-            etiqueta = "nodo" + id + " [ label =\"" + valor + "\"];\n";
+            etiqueta = "nodo"+id+"[label=\"<f0> "+pri+"|{<f1>"+this.nulable+" |<f2> "+valor+"|<f3> id: "+this.id+"}|<f5>"+ult+"\"];\n";
         }
         if(hizq !=null){
             etiqueta+=hizq.getCodigoInterno()+"nodo"+id+"->nodo"+hizq.id+";\n";
@@ -105,5 +109,7 @@ public class Nodo {
             etiqueta+=hder.getCodigoInterno()+"nodo"+id+"->nodo"+hder.id+";\n";
         }
         return etiqueta;
+        
+         
     }
 }

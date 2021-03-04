@@ -6,7 +6,17 @@
 package olc.GUI;
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.PrintWriter;
+import java.io.StringReader;
+import java.util.Map;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import olc.analizadores.lexico;
+import olc.analizadores.parser;
+import olc.funciones.Arbol;
+import olc.funciones.Nodo;
+
 
 /**
  *
@@ -65,6 +75,11 @@ public class FrameP extends javax.swing.JFrame {
         });
 
         jButton4.setText("Generar AFD");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
 
         jButton5.setText("Analizar Expr.");
 
@@ -195,6 +210,101 @@ public class FrameP extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jButton6ActionPerformed
 
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        // TODO add your handling code here:
+        checkDir();
+        try {
+            parser sintaxis;
+            sintaxis = new parser(new lexico(new StringReader(this.jTextArea1.getText())));
+            sintaxis.parse();
+            try{
+                for (Map.Entry<String, Arbol> entry : sintaxis.map.entrySet()) {
+                    String acto = entry.getValue().raiz.getCodigoInterno();
+                    graficar(acto,"OUTPUT/ARBOLES_201709146/"+entry.getKey());
+                    acto = entry.getValue().Siguientes();
+                    graficar(acto,"OUTPUT/SIGUIENTES_201709146/"+entry.getKey());
+                }
+            
+            }catch(Exception r){r.printStackTrace();}
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }//GEN-LAST:event_jButton4ActionPerformed
+
+    public void graficar(String act, String nombre){
+        FileWriter fichero = null;
+        PrintWriter pw = null;
+        try {
+            fichero = new FileWriter("../" + nombre + ".dot");
+            pw = new PrintWriter(fichero);
+            pw.println("digraph G{");
+            pw.println("rankdir=UD");
+            pw.println("node[shape=record]");
+            pw.println("concentrate=true");
+            pw.println(act);
+            pw.println("}");
+        } catch (Exception e) {
+            System.out.println("error, no se realizo el archivo");
+        } finally {
+            try {
+                if (null != fichero) {
+                    fichero.close();
+                }
+            } catch (Exception e2) {
+                e2.printStackTrace();
+            }
+        }
+        try{       
+            ProcessBuilder pbuilder;
+		pbuilder = new ProcessBuilder( "dot", "-Tpng", "-o", "../" + nombre + ".png", "../" + nombre + ".dot" );
+		pbuilder.redirectErrorStream( true );			//Ejecuta el proceso
+		pbuilder.start();
+		    
+	} catch (Exception e) { e.printStackTrace(); }
+        
+        
+       
+         
+    }
+    
+    public void checkDir(){
+        File direct = new File("../OUTPUT");
+        if (!direct.exists()) {
+            direct.mkdirs(); 
+        }
+        File directorio = new File("../OUTPUT/ARBOLES_201709146");
+        if (!directorio.exists()) {
+            directorio.mkdirs(); 
+        }
+        directorio = new File("../OUTPUT/AFND_201709146");
+        if (!directorio.exists()) {
+            directorio.mkdirs(); 
+        }
+        directorio = new File("../OUTPUT/SIGUIENTES_201709146");
+        if (!directorio.exists()) {
+            directorio.mkdirs(); 
+        }
+        directorio = new File("../OUTPUT/TRANSICIONES_201709146");
+        if (!directorio.exists()) {
+            directorio.mkdirs(); 
+        }
+        directorio = new File("../OUTPUT/AFD_201709146");
+        if (!directorio.exists()) {
+            directorio.mkdirs(); 
+        }
+        directorio = new File("../OUTPUT/ERRORES_201709146");
+        if (!directorio.exists()) {
+            directorio.mkdirs(); 
+        }
+        directorio = new File("../OUTPUT/SALIDAS_201709146");
+        if (!directorio.exists()) {
+            directorio.mkdirs(); 
+        }
+    }
+    
+    
+    
+    
     /**
      * @param args the command line arguments
      */

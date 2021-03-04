@@ -28,8 +28,9 @@ parser code
 
 terminal String conj, detail, assign, separate, end, open, clos,
         unomas, ceromas, conc, cerouno, estot,
-        salli, comidob, comi, fromto,coma;
-terminal String palabra, esp, epx;
+        fromto,coma;
+terminal String charas;
+terminal String palabra, cadena;
 
 non terminal INICIO;
 non terminal ABC;
@@ -37,7 +38,6 @@ non terminal INP;
 non terminal Nodo EXP;
 non terminal CONJ;
 
-precedence left conc;
 start with INICIO;
 
 INICIO::=ABC;
@@ -45,35 +45,34 @@ INICIO::=ABC;
 ABC  ::= open ABC
     |  conj    detail  palabra   assign  CONJ end ABC
     |  palabra:nombre assign  EXP:var1 end ABC     {:System.out.println(nombre);parser.map.put(nombre, new Arbol());
-                                                parser.map.get(nombre).setRaiz(new Nodo(var1,new Nodo(null, null, "#", parser.contador),".",parser.contador));
+                                                parser.map.get(nombre).setRaiz(new Nodo(var1, new Nodo(null, null, "#", parser.contador) ,"." , 0));
                                                 parser.contador++;:}
     |  separate separate separate separate INP
+    | error
 
 ;
 
-CONJ ::= palabra CONJ
-    |coma palabra CONJ
+CONJ ::= charas CONJ {:  :}
+    |coma charas CONJ
     |
-    |fromto palabra
+    |fromto charas
 
 ;
 
-INP ::=palabra detail comidob palabra comidob end INP
+INP ::=palabra:var1 detail cadena:var2 end INP {:System.out.println(var1 +" es "+ var2);:}
     |clos 
     |
 
 ;
 
 
-EXP ::= cerouno EXP:var1    {:RESULT= new Nodo(var1, null, "?", parser.contador); parser.contador++;:}
+EXP ::= cerouno EXP:var1    {:RESULT= new Nodo(var1, null, "?", parser.contador); parser.contador++; :}
  |  unomas EXP:var1         {:RESULT= new Nodo(var1, null, "+", parser.contador); parser.contador++;:}
  |  ceromas EXP:var1        {:RESULT= new Nodo(var1, null, "*", parser.contador); parser.contador++;:}
  |  conc EXP:var1 EXP:var2  {:RESULT= new Nodo(var1, var2, ".", parser.contador); parser.contador++;:}
  |  estot EXP:var1 EXP:var2 {:RESULT= new Nodo(var1, var2, "|", parser.contador); parser.contador++;:}
- |  palabra:simbolo                 {:RESULT= new Nodo(null, null, simbolo, parser.contador); parser.contador++;:}
- |  open palabra:simbolo clos      {:RESULT= new Nodo(null, null, simbolo, parser.contador); parser.contador++;:}
- |  comi palabra:simbolo comi           {:RESULT= new Nodo(null, null, simbolo, parser.contador); parser.contador++;:}
- |  comidob esp:simbolo comidob     {:RESULT= new Nodo(null, null, simbolo, parser.contador); parser.contador++;:}
+ |  open palabra:simbolo clos      {:RESULT= new Nodo(null, null, simbolo, parser.contador); parser.contador++;System.out.println(simbolo);:}
+ |  cadena:simbolo     {:RESULT= new Nodo(null, null, simbolo, parser.contador); parser.contador++;System.out.println(simbolo);:}
  |error;
 
 

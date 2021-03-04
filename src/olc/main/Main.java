@@ -10,6 +10,7 @@ import java.io.PrintWriter;
 import java.io.StringReader;
 import java.util.HashMap;
 import java.util.Map;
+import olc.GUI.FrameP;
 import olc.analizadores.*;
 import olc.funciones.*;
 
@@ -24,30 +25,8 @@ public class Main {
      */
     public static void main(String[] args) {
         // TODO code application logic here
-         try {
-            parser sintaxis;
-            sintaxis = new parser(new lexico(new StringReader("{\n" +
-        "CONJ: letra -> a~z; \n"+
-                   "CONJ: letra -> a,b,c; \n"+
-        "////HOla "+
-        
-        "ExpReg1 -> . {letra} * | \"_\" | {letra} {digito}; \n" +
-        
-        "RegEx3 -> . {digito} * | \"_\" | {letra} {digito};\n" +
-        "%%\n" +
-        "%%\n" +
-        "ExpReg1 : \"primerLexemaCokoa\"; \n" +
-        "\n}")));
-            sintaxis.parse();
-            try{
-            graficarArbol(sintaxis.map.get("RegEx3").raiz,"arbolito1");
-            }catch(Exception r){r.printStackTrace();}
-            //graficarArbol(sintaxis.map.get("ExpresionReg2").raiz,"arbolito2");
-            //graficarArbol(sintaxis.map.get("RegEx3").raiz,"arbolito3");
-            System.out.println("Hola");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+         FrameP v = new FrameP();
+         v.setVisible(true);
     }
         
         public static void graficarArbol(Nodo act, String nombre){

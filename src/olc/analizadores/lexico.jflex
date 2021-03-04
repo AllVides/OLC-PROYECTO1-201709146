@@ -16,16 +16,16 @@ import java_cup.runtime.Symbol;
 %init} 
 
 LineTerminator = \r|\n|\r\n
-InputCharacter = [^\r\n]
+L = [A-Za-z]([A-Za-z0-9]|"_")*
+Caracter =  "!"|"\""|"#"|"$"|"%"|"&"|"\'"|"("|")"|"*"|"+"|","|"."|"\-"|"/"|":"|";"|"<"|">"|"="|"?"|"\@"|"["|"\\"|"]"|"^"|"_"|"`"|"\{"|"\}"|"|"
 WhiteSpace     = {LineTerminator} | [ \t\f]
-
-EndOfLineComment     = "//" {InputCharacter}* {LineTerminator}?
-DocumentationComment = "<!" {InputCharacter}| {WhiteSpace} "!"+ ">"
-ESPECIALES= _|"."
-
-comillas = [\"]
+EndOfLineComment     = ("//".*{LineTerminator})
+DocumentationComment = "<!""!"*([^!>]|[^!]">"|"!"[^>])*"!"*"!>"
+comment = ({EndOfLineComment} | {DocumentationComment})
+charas=({Caracter} | [a-zA-Z0-9])
+comillas = [\"\']
 FLECHA = "-" {WhiteSpace}* ">"
-L = ([A-Z]|[a-z]|[0-9])+
+Cadena = \"([^\r\n\"])+\"
 
 %%
 
@@ -37,11 +37,9 @@ L = ([A-Z]|[a-z]|[0-9])+
 "%" {return new Symbol(sym.separate,yyline,yychar, yytext());} 
 ";" {return new Symbol(sym.end, yyline,yychar, yytext());}
 
-/*"\n" {return new Symbol (sym.salli, yyline, yychar, yytext());}*/
-{comillas} {return new Symbol (sym.comidob, yyline, yychar, yytext());}
 
 
-\' {return new Symbol (sym.comi, yyline, yychar, yytext());}
+
 "~" {return new Symbol (sym.fromto, yyline, yychar, yytext());}
 "," {return new Symbol (sym.coma, yyline, yychar, yytext());}
 
@@ -51,14 +49,19 @@ L = ([A-Z]|[a-z]|[0-9])+
 "?" {return new Symbol(sym.cerouno, yyline, yychar, yytext());}
 "|" {return new Symbol(sym.estot, yyline, yychar, yytext());}
 
+
+
 \n          {yycolumn=1;}
 
 {WhiteSpace} {} 
 {LineTerminator} {}
-{EndOfLineComment} {}
-{DocumentationComment} {}
+{comment} {}
+/*{Caracter} {return new Symbol (sym.carac,yyline,yychar,yytext());}*/
+{charas} {return new Symbol (sym.charas,yyline,yychar,yytext());}
 {L} {return new Symbol(sym.palabra,yyline,yychar, yytext());}
-{ESPECIALES} {return new Symbol(sym.esp,yyline,yychar, yytext());}
+{Cadena} {return new Symbol (sym.cadena,yyline,yychar,yytext().substring(1,yytext().length()-1));}
+
+
 
 .  {
 	    System.err.println("Error lexico: "+yytext()+ " Linea:"+(yyline)+" Columna:"+(yycolumn));
