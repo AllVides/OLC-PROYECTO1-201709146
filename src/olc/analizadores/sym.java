@@ -8,7 +8,7 @@ package olc.analizadores;
 /** CUP generated class containing symbol constants. */
 public class sym {
   /* terminals */
-  public static final int cadena = 18;
+  public static final int cadena = 19;
   public static final int cerouno = 12;
   public static final int ceromas = 10;
   public static final int end = 6;
@@ -19,7 +19,8 @@ public class sym {
   public static final int separate = 5;
   public static final int open = 7;
   public static final int EOF = 0;
-  public static final int palabra = 17;
+  public static final int esp = 17;
+  public static final int palabra = 18;
   public static final int unomas = 9;
   public static final int assign = 4;
   public static final int error = 1;
@@ -45,6 +46,7 @@ public class sym {
   "fromto",
   "coma",
   "charas",
+  "esp",
   "palabra",
   "cadena"
   };

@@ -7,6 +7,7 @@ package olc.funciones;
 
 import java.util.ArrayList;
 import java.util.List;
+import olc.GUI.FrameP;
 
 /**
  *
@@ -27,9 +28,14 @@ public class Nodo {
         this.hder=hder;
         this.valor=valor;
         this.id=id;
-        this.isNulable();
-        this.setPrimeros();
-        this.setUltimos();
+        try{
+            this.isNulable();
+            this.setPrimeros();
+            this.setUltimos();}
+        catch(Exception e){
+            ErrorM nuevoe = new ErrorM("Inicalizacoin de Nodo", valor, 0, 0);
+            FrameP.listaErrores.add(nuevoe);
+        }
     }
     
     

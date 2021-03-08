@@ -1,5 +1,7 @@
 package olc.analizadores;
 import java_cup.runtime.Symbol;
+import olc.funciones.*;
+import olc.GUI.*;
 
 %% 
 %class lexico
@@ -26,6 +28,17 @@ charas=({Caracter} | [a-zA-Z0-9])
 comillas = [\"\']
 FLECHA = "-" {WhiteSpace}* ">"
 Cadena = \"([^\r\n\"])+\"
+simboloESP =  (\\n)|(\\\")|(\\\')
+
+
+%{
+    public void addError(String tipo, String lexema, int fila, int columna)
+    {
+        ErrorM nuevoerror = new ErrorM(tipo, lexema, fila+1, columna+1);
+        FrameP.listaErrores.add(nuevoerror);
+    }
+%}
+
 
 %%
 
@@ -56,6 +69,7 @@ Cadena = \"([^\r\n\"])+\"
 {WhiteSpace} {} 
 {LineTerminator} {}
 {comment} {}
+{simboloESP} {return new Symbol (sym.esp,yyline,yychar,yytext());}
 /*{Caracter} {return new Symbol (sym.carac,yyline,yychar,yytext());}*/
 {charas} {return new Symbol (sym.charas,yyline,yychar,yytext());}
 {L} {return new Symbol(sym.palabra,yyline,yychar, yytext());}
@@ -65,6 +79,7 @@ Cadena = \"([^\r\n\"])+\"
 
 .  {
 	    System.err.println("Error lexico: "+yytext()+ " Linea:"+(yyline)+" Columna:"+(yycolumn));
+            addError("Tipo Lexico", yytext(), yyline, yycolumn);
            
     }
 

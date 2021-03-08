@@ -20,6 +20,7 @@ public class Arbol {
     public Nodo raiz;
     public Map<String, List<String>> tablasig= new HashMap<String, List<String>>();
     public Map<String, String> map = new HashMap<String, String>();
+    public AFD auto;
     
     public Arbol (){
     }
@@ -31,6 +32,19 @@ public class Arbol {
         return this.raiz;
     }
     
+    public String afd(){
+        return this.auto.printAFD();
+    }
+    
+    public String Automata(){
+        Map<String, String> map = new TreeMap<String, String>(this.map);
+        Map<String, List<String>> tablasig = new TreeMap<String, List<String>>(this.tablasig);
+        this.auto = new AFD(tablasig, map, this.raiz.primeros, this.raiz.hder.leafid);
+        this.auto.createState();
+        this.auto.createTrans();
+        return this.auto.printTabla();
+    }
+    
     public String Siguientes(){
         getTerminals(this.raiz);
         tablaSiguientes(this.raiz);
@@ -39,9 +53,11 @@ public class Arbol {
     
     public void getTerminals(Nodo nodo){
         if(nodo.hizq != null){
-            getTerminals(nodo.hizq);}
+            getTerminals(nodo.hizq);
+        }
         if(nodo.hder != null){
-            getTerminals(nodo.hder);}
+            getTerminals(nodo.hder);
+        }
         if(nodo.hizq == null && nodo.hder == null){
             this.map.put(String.valueOf(nodo.id),nodo.valor);
         }
@@ -54,6 +70,10 @@ public class Arbol {
         if(nodo.hder!=null){
             tablaSiguientes(nodo.hder);
         }
+        if(nodo.hder==null && nodo.hizq == null){
+            return;
+        }
+        
         if(nodo.valor == "."){
             for(String num: nodo.hizq.ultimos){
                 if(this.tablasig.containsKey(num)){
@@ -75,9 +95,9 @@ public class Arbol {
                 else{this.tablasig.put(num, nodo.hizq.primeros);}
             }
         }
-        
-        
     }
+    
+    
     public String printSig(){
         String etiqueta = "nodounico[label=\" {Hoja|Siguientes}";
         Map<String, String> map = new TreeMap<String, String>(this.map);

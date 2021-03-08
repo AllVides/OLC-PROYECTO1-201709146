@@ -3,25 +3,27 @@ import java_cup.runtime.*;
 import olc.funciones.*;
 import java.util.HashMap;
 import java.util.Map;
+import olc.GUI.*;
 
 parser code 
 {:
     //Codigo que se le agrega al parser
     public static Map<String, Arbol> map = new HashMap<String, Arbol>();
-    public static Arbol arbolito = new Arbol();
     public int contador = 1;
 
     //Codigo para Errores Sintacticos
     public void syntax_error(Symbol s)
     {
         System.err.println("Error en la Linea " + (s.right+1) +" Columna "+(s.left+1)+ ". Identificador "+s.value + " no reconocido. Se ha recuperado del error." );
-        
+        ErrorM nuevoe = new ErrorM("Tipo Sintactico (Recuperado)", s.value.toString(), s.right+1, s.left+1);
+        FrameP.listaErrores.add(nuevoe);
         
     }
     public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception
     {
         System.err.println("Error en la Linea " + (s.right+1)+ " Columna "+(s.left+1)+". Identificador " +s.value + " no reconocido.");
-        
+        ErrorM nuevoe = new ErrorM("Tipo Sintactico (Irrecuperable)", s.value.toString(), s.right+1, s.left+1);
+        FrameP.listaErrores.add(nuevoe);
         
     }  
 :} 
@@ -29,7 +31,7 @@ parser code
 terminal String conj, detail, assign, separate, end, open, clos,
         unomas, ceromas, conc, cerouno, estot,
         fromto,coma;
-terminal String charas;
+terminal String charas, esp;
 terminal String palabra, cadena;
 
 non terminal INICIO;
@@ -73,6 +75,7 @@ EXP ::= cerouno EXP:var1    {:RESULT= new Nodo(var1, null, "?", parser.contador)
  |  estot EXP:var1 EXP:var2 {:RESULT= new Nodo(var1, var2, "|", parser.contador); parser.contador++;:}
  |  open palabra:simbolo clos      {:RESULT= new Nodo(null, null, simbolo, parser.contador); parser.contador++;System.out.println(simbolo);:}
  |  cadena:simbolo     {:RESULT= new Nodo(null, null, simbolo, parser.contador); parser.contador++;System.out.println(simbolo);:}
+ |  esp:simbolo        {:RESULT= new Nodo(null, null, simbolo, parser.contador); parser.contador++;System.out.println(simbolo);:}
  |error;
 
 

@@ -8,14 +8,18 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import olc.analizadores.lexico;
 import olc.analizadores.parser;
 import olc.funciones.Arbol;
 import olc.funciones.Nodo;
+import olc.funciones.ErrorM;
 
 
 /**
@@ -27,6 +31,8 @@ public class FrameP extends javax.swing.JFrame {
     /**
      * Creates new form FrameP
      */
+    public static ArrayList<ErrorM> listaErrores = new ArrayList<ErrorM>();
+    
     public FrameP() {
         initComponents();
     }
@@ -219,11 +225,21 @@ public class FrameP extends javax.swing.JFrame {
             sintaxis.parse();
             try{
                 for (Map.Entry<String, Arbol> entry : sintaxis.map.entrySet()) {
-                    String acto = entry.getValue().raiz.getCodigoInterno();
-                    graficar(acto,"OUTPUT/ARBOLES_201709146/"+entry.getKey());
-                    acto = entry.getValue().Siguientes();
-                    graficar(acto,"OUTPUT/SIGUIENTES_201709146/"+entry.getKey());
+                    try{
+                        String acto = entry.getValue().raiz.getCodigoInterno();
+                        graficar(acto,"OUTPUT/ARBOLES_201709146/"+entry.getKey());
+                        acto = entry.getValue().Siguientes();
+                        graficar(acto,"OUTPUT/SIGUIENTES_201709146/"+entry.getKey());
+                        acto = entry.getValue().Automata();
+                        graficar(acto, "OUTPUT/TRANSICIONES_201709146/"+entry.getKey());
+                        acto = entry.getValue().afd();
+                        graficar(acto, "OUTPUT/AFD_201709146/"+entry.getKey());
+                        generarHTML();
+                    }catch(Exception f){
+                        generarHTML();
+                    }
                 }
+                parser.map = new HashMap<String, Arbol>();
             
             }catch(Exception r){r.printStackTrace();}
         } catch (Exception e) {
@@ -231,6 +247,47 @@ public class FrameP extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jButton4ActionPerformed
 
+    public static void generarHTML() throws IOException{
+        FileWriter fichero = null;
+        PrintWriter pw = null;
+        try {
+            fichero = new FileWriter("../OUTPUT/ERRORES_201709146/errores.html");
+            pw = new PrintWriter(fichero);
+            //comenzamos a escribir el html
+            pw.println("<html>");
+            pw.println("<head><title>REPORTE DE ERRORES</title></head>");
+            pw.println("<body>");
+            pw.println("<div align=\"center\">");
+            pw.println("<h1>Reporte de Errores</h1>");
+            pw.println("<br></br>");
+            pw.println("<table border=1>");
+            pw.println("<tr>");
+            pw.println("<td bgcolor=blue>TIPO</td>");
+            pw.println("<td bgcolor=blue>VALOR</td>");
+            pw.println("<td bgcolor=blue>FILA</td>");
+            pw.println("<td bgcolor=blue>COLUMNA</td>");
+            pw.println("</tr>");
+            for(int i=0;i<listaErrores.size();i++){
+                pw.println("<tr>");
+                pw.println("<td>"+listaErrores.get(i).getTipoError()+"</td>");
+                pw.println("<td>"+listaErrores.get(i).getValorError()+"</td>");
+                pw.println("<td>"+listaErrores.get(i).getFila()+"</td>");
+                pw.println("<td>"+listaErrores.get(i).getColumna()+"</td>");
+                pw.println("</tr>");
+            }
+            pw.println("</table>");
+            pw.println("</div");
+            pw.println("</body>");
+            pw.println("</html>");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }finally{
+            if(null!=fichero){
+                fichero.close();
+            }
+        }
+    }
+    
     public void graficar(String act, String nombre){
         FileWriter fichero = null;
         PrintWriter pw = null;
