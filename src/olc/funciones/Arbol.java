@@ -113,6 +113,10 @@ public class Arbol {
         etiqueta += "\"];\n";
         return etiqueta;
     }
+    
+    public void evaluar(String cadena){
+        this.auto.validar(cadena);
+    }
 }
 
 

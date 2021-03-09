@@ -8,7 +8,9 @@ package olc.main;
 import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.io.StringReader;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import olc.GUI.FrameP;
 import olc.analizadores.*;
@@ -28,6 +30,7 @@ public class Main {
          FrameP v = new FrameP();
          v.setVisible(true);
     }
+    
         
         public static void graficarArbol(Nodo act, String nombre){
         FileWriter fichero = null;

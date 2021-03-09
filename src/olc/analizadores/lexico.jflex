@@ -25,6 +25,8 @@ EndOfLineComment     = ("//".*{LineTerminator})
 DocumentationComment = "<!""!"*([^!>]|[^!]">"|"!"[^>])*"!"*"!>"
 comment = ({EndOfLineComment} | {DocumentationComment})
 charas=({Caracter} | [a-zA-Z0-9])
+conjuList = {charas} (","([ \t\f])?({charas}))+
+fromto = {charas} "~" {charas}
 comillas = [\"\']
 FLECHA = "-" {WhiteSpace}* ">"
 Cadena = \"([^\r\n\"])+\"
@@ -51,11 +53,6 @@ simboloESP =  (\\n)|(\\\")|(\\\')
 ";" {return new Symbol(sym.end, yyline,yychar, yytext());}
 
 
-
-
-"~" {return new Symbol (sym.fromto, yyline, yychar, yytext());}
-"," {return new Symbol (sym.coma, yyline, yychar, yytext());}
-
 "+" {return new Symbol(sym.unomas, yyline, yychar, yytext());}
 "*" {return new Symbol(sym.ceromas, yyline, yychar, yytext());}
 "." {return new Symbol(sym.conc, yyline, yychar, yytext());}
@@ -69,9 +66,10 @@ simboloESP =  (\\n)|(\\\")|(\\\')
 {WhiteSpace} {} 
 {LineTerminator} {}
 {comment} {}
+{fromto} {return new Symbol (sym.fromto, yyline, yychar, yytext());}
+{conjuList} {return new Symbol (sym.conjuList, yyline, yychar, yytext());}
 {simboloESP} {return new Symbol (sym.esp,yyline,yychar,yytext());}
 /*{Caracter} {return new Symbol (sym.carac,yyline,yychar,yytext());}*/
-{charas} {return new Symbol (sym.charas,yyline,yychar,yytext());}
 {L} {return new Symbol(sym.palabra,yyline,yychar, yytext());}
 {Cadena} {return new Symbol (sym.cadena,yyline,yychar,yytext().substring(1,yytext().length()-1));}
 

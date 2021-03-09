@@ -88,6 +88,11 @@ public class FrameP extends javax.swing.JFrame {
         });
 
         jButton5.setText("Analizar Expr.");
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton5ActionPerformed(evt);
+            }
+        });
 
         jButton6.setText("Guardar como...");
         jButton6.addActionListener(new java.awt.event.ActionListener() {
@@ -208,11 +213,14 @@ public class FrameP extends javax.swing.JFrame {
         JFileChooser chooser = new JFileChooser();
 
         chooser.setFileFilter(new FileNameExtensionFilter("Archivos html", "html"));
-
+        
+        
         if (chooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
 
             String path = chooser.getSelectedFile().getPath();
             //crearHTML(path.endsWith(".html") ? path : path + ".html");
+            
+            
         }
     }//GEN-LAST:event_jButton6ActionPerformed
 
@@ -223,6 +231,9 @@ public class FrameP extends javax.swing.JFrame {
             parser sintaxis;
             sintaxis = new parser(new lexico(new StringReader(this.jTextArea1.getText())));
             sintaxis.parse();
+            for (Map.Entry<String, java.util.List<String>> entry : sintaxis.conjunto.entrySet()) {
+                System.out.println(entry.getValue() +" es "+entry.getKey());
+            }
             try{
                 for (Map.Entry<String, Arbol> entry : sintaxis.map.entrySet()) {
                     try{
@@ -235,6 +246,14 @@ public class FrameP extends javax.swing.JFrame {
                         acto = entry.getValue().afd();
                         graficar(acto, "OUTPUT/AFD_201709146/"+entry.getKey());
                         generarHTML();
+                        for(int i = 0; i<sintaxis.cadenas.size();i++){
+                            String[] eval = sintaxis.cadenas.get(i).split(":=:!");
+                            try{
+                                parser.map.get(eval[0]).evaluar(eval[1]);
+                            }catch (Exception e){
+                                e.printStackTrace();
+                            }
+                        }
                     }catch(Exception f){
                         generarHTML();
                     }
@@ -246,6 +265,11 @@ public class FrameP extends javax.swing.JFrame {
             e.printStackTrace();
         }
     }//GEN-LAST:event_jButton4ActionPerformed
+
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        // TODO add your handling code here:
+        
+    }//GEN-LAST:event_jButton5ActionPerformed
 
     public static void generarHTML() throws IOException{
         FileWriter fichero = null;

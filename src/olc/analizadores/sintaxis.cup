@@ -3,6 +3,8 @@ import java_cup.runtime.*;
 import olc.funciones.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
+import java.util.ArrayList;
 import olc.GUI.*;
 
 parser code 
@@ -10,6 +12,10 @@ parser code
     //Codigo que se le agrega al parser
     public static Map<String, Arbol> map = new HashMap<String, Arbol>();
     public int contador = 1;
+    public boolean flagi = true;
+
+    public static Map<String, List<String>> conjunto = new HashMap<String, List<String>>();
+    public static List<String> cadenas = new ArrayList<String>();
 
     //Codigo para Errores Sintacticos
     public void syntax_error(Symbol s)
@@ -29,23 +35,23 @@ parser code
 :} 
 
 terminal String conj, detail, assign, separate, end, open, clos,
-        unomas, ceromas, conc, cerouno, estot,
-        fromto,coma;
+        unomas, ceromas, conc, cerouno, estot;
 terminal String charas, esp;
 terminal String palabra, cadena;
+terminal String conjuList, fromto;
 
 non terminal INICIO;
 non terminal ABC;
 non terminal INP;
 non terminal Nodo EXP;
-non terminal CONJ;
+non terminal List CONJ;
 
 start with INICIO;
 
 INICIO::=ABC;
 
 ABC  ::= open ABC
-    |  conj    detail  palabra   assign  CONJ end ABC
+    |  conj    detail  palabra:nombre   assign  CONJ:lista end ABC {: parser.conjunto.put(nombre, lista); :}
     |  palabra:nombre assign  EXP:var1 end ABC     {:System.out.println(nombre);parser.map.put(nombre, new Arbol());
                                                 parser.map.get(nombre).setRaiz(new Nodo(var1, new Nodo(null, null, "#", parser.contador) ,"." , 0));
                                                 parser.contador++;:}
@@ -54,14 +60,14 @@ ABC  ::= open ABC
 
 ;
 
-CONJ ::= charas CONJ {:  :}
-    |coma charas CONJ
-    |
-    |fromto charas
+CONJ ::= fromto:rango {:RESULT= Conjuntos.conjRange(rango);  :}
+    |conjuList:conjunto {:RESULT= Conjuntos.conjList(conjunto); :}
+    |error
 
 ;
 
-INP ::=palabra:var1 detail cadena:var2 end INP {:System.out.println(var1 +" es "+ var2);:}
+INP ::=palabra:var1 detail cadena:var2 end INP {:System.out.println(var1 +" es "+ var2);
+                                                parser.cadenas.add(var1+":=:!"+var2);:}
     |clos 
     |
 
