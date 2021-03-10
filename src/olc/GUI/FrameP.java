@@ -6,7 +6,9 @@
 package olc.GUI;
 import javax.swing.*;
 import java.awt.*;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -32,6 +34,8 @@ public class FrameP extends javax.swing.JFrame {
      * Creates new form FrameP
      */
     public static ArrayList<ErrorM> listaErrores = new ArrayList<ErrorM>();
+    public String path = "";
+    public String name = "";
     
     public FrameP() {
         initComponents();
@@ -52,7 +56,6 @@ public class FrameP extends javax.swing.JFrame {
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
-        jButton5 = new javax.swing.JButton();
         jButton6 = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
@@ -80,17 +83,10 @@ public class FrameP extends javax.swing.JFrame {
             }
         });
 
-        jButton4.setText("Generar AFD");
+        jButton4.setText("Realizar Analisis");
         jButton4.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton4ActionPerformed(evt);
-            }
-        });
-
-        jButton5.setText("Analizar Expr.");
-        jButton5.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton5ActionPerformed(evt);
             }
         });
 
@@ -112,15 +108,12 @@ public class FrameP extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(jButton2)
                                 .addGap(18, 18, 18)
                                 .addComponent(jButton3)
                                 .addGap(18, 18, 18)
-                                .addComponent(jButton6)))
+                                .addComponent(jButton6))
+                            .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 349, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(0, 379, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -135,9 +128,7 @@ public class FrameP extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton4)
-                    .addComponent(jButton5))
+                .addComponent(jButton4)
                 .addContainerGap(14, Short.MAX_VALUE))
         );
 
@@ -184,46 +175,114 @@ public class FrameP extends javax.swing.JFrame {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
+        File archivo = null;
+        FileReader fr = null;
+        BufferedReader br = null;
         JFileChooser chooser = new JFileChooser();
 
-        chooser.setFileFilter(new FileNameExtensionFilter("Archivos html", "html"));
+        chooser.setFileFilter(new FileNameExtensionFilter("Archivos OLC", "olc"));
 
-        if (chooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
+        if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
 
-            String path = chooser.getSelectedFile().getPath();
-            //crearHTML(path.endsWith(".html") ? path : path + ".html");
+            this.path = chooser.getSelectedFile().getPath();
+            this.name = chooser.getName();
+            String content = "";
+            try{
+                archivo = new File (this.path);
+                fr = new FileReader (archivo);
+                br = new BufferedReader(fr);
+                String linea;
+                while((linea=br.readLine())!=null){
+                    content += linea+"\n";}
+                this.jTextArea1.setText(content);
+                
+            }catch(Exception e){
+                e.printStackTrace();
+            }finally{
+                try{
+                    if(null!=fr){
+                        fr.close();
+                    }
+                }catch(Exception r){
+                    r.printStackTrace();
+                }
+            }
         }
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
-        JFileChooser chooser = new JFileChooser();
-
-        chooser.setFileFilter(new FileNameExtensionFilter("Archivos html", "html"));
-
-        if (chooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
-
-            String path = chooser.getSelectedFile().getPath();
-            //crearHTML(path.endsWith(".html") ? path : path + ".html");
-        }
+        if (this.path == null){
+            guardarcomo();
+        }else{
+        guardar();}
+        
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
         // TODO add your handling code here:
+        guardarcomo();
+    }//GEN-LAST:event_jButton6ActionPerformed
+
+    public void guardar(){
+        FileWriter fichero = null;
+        PrintWriter pw = null;
+        try {
+            fichero = new FileWriter(this.path);/*recordar cambiar nombre para que diferencie todo*/
+            pw = new PrintWriter(fichero);
+       
+            pw.println(this.jTextArea1.getText());
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            this.jTextArea2.setText("error al guardar archivo");
+        }finally{
+            if(null!=fichero){
+                try{
+                    fichero.close();
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
+            }
+        }
+        this.jTextArea2.setText("Archivo guardado exitosamente");
+    }
+    public void guardarcomo(){
+        FileWriter fichero = null;
+        PrintWriter pw = null;
         JFileChooser chooser = new JFileChooser();
 
-        chooser.setFileFilter(new FileNameExtensionFilter("Archivos html", "html"));
-        
-        
+        chooser.setFileFilter(new FileNameExtensionFilter("Archivos OLC", "olc"));
+
         if (chooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
 
             String path = chooser.getSelectedFile().getPath();
-            //crearHTML(path.endsWith(".html") ? path : path + ".html");
+            try {
+            fichero = new FileWriter(path);
+            pw = new PrintWriter(fichero);
+       
+            pw.println(this.jTextArea1.getText());
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            this.jTextArea2.setText("error al guardar archivo");
+        }finally{
+            if(null!=fichero){
+                try{
+                    fichero.close();
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
+            }
+        }
+        this.jTextArea2.setText("Archivo guardado exitosamente");
+        
+            
             
             
         }
-    }//GEN-LAST:event_jButton6ActionPerformed
-
+    }
+    
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
         checkDir();
@@ -231,34 +290,50 @@ public class FrameP extends javax.swing.JFrame {
             parser sintaxis;
             sintaxis = new parser(new lexico(new StringReader(this.jTextArea1.getText())));
             sintaxis.parse();
-            for (Map.Entry<String, java.util.List<String>> entry : sintaxis.conjunto.entrySet()) {
+            String log = "";
+            for (Map.Entry<String, java.util.List<String>> entry : parser.conjunto.entrySet()) {
                 System.out.println(entry.getValue() +" es "+entry.getKey());
             }
             try{
                 for (Map.Entry<String, Arbol> entry : sintaxis.map.entrySet()) {
                     try{
+                        log+="PARA EXPRESION: "+entry.getKey();
                         String acto = entry.getValue().raiz.getCodigoInterno();
                         graficar(acto,"OUTPUT/ARBOLES_201709146/"+entry.getKey());
+                        log += "arboles creados exitosamente\n";
                         acto = entry.getValue().Siguientes();
                         graficar(acto,"OUTPUT/SIGUIENTES_201709146/"+entry.getKey());
+                        log += "tabla siguientes creada exitosamente\n";
                         acto = entry.getValue().Automata();
                         graficar(acto, "OUTPUT/TRANSICIONES_201709146/"+entry.getKey());
+                        log += "tabla transiciones creada exitosamente\n";
                         acto = entry.getValue().afd();
                         graficar(acto, "OUTPUT/AFD_201709146/"+entry.getKey());
+                        log += "AFD's creados exitosamente\n";
                         generarHTML();
-                        for(int i = 0; i<sintaxis.cadenas.size();i++){
-                            String[] eval = sintaxis.cadenas.get(i).split(":=:!");
-                            try{
-                                parser.map.get(eval[0]).evaluar(eval[1]);
-                            }catch (Exception e){
-                                e.printStackTrace();
+                        log += "reporte de errores creado exitosamente\n";
+                        try{
+                            acto = "";
+                            for(String cadena : parser.cadenas){
+                                String[] eval = cadena.split(":=:!");
+                                System.out.println("hola");
+                                acto += parser.map.get(eval[0]).evaluar(eval[1], eval[0]);
                             }
-                        }
+                            System.out.println("hola");
+                            log += acto;
+                            printJSON(acto);
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }  
                     }catch(Exception f){
                         generarHTML();
                     }
                 }
                 parser.map = new HashMap<String, Arbol>();
+                parser.conjunto.clear();
+                parser.cadenas.clear();
+                
+                this.jTextArea2.setText(log);
             
             }catch(Exception r){r.printStackTrace();}
         } catch (Exception e) {
@@ -266,16 +341,28 @@ public class FrameP extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jButton4ActionPerformed
 
-    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
-        // TODO add your handling code here:
-        
-    }//GEN-LAST:event_jButton5ActionPerformed
-
-    public static void generarHTML() throws IOException{
+    public void printJSON(String acto) throws IOException{
         FileWriter fichero = null;
         PrintWriter pw = null;
         try {
-            fichero = new FileWriter("../OUTPUT/ERRORES_201709146/errores.html");
+            fichero = new FileWriter("../OUTPUT/SALIDAS_201709146/salida_"+this.name+".json");/*recordar cambiar nombre para que diferencie todo*/
+            pw = new PrintWriter(fichero);
+            pw.println("[");
+            pw.println(acto);
+            pw.println("]");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }finally{
+            if(null!=fichero){
+                fichero.close();
+            }
+        }
+    }
+    public void generarHTML() throws IOException{
+        FileWriter fichero = null;
+        PrintWriter pw = null;
+        try {
+            fichero = new FileWriter("../OUTPUT/ERRORES_201709146/error_"+this.name+".html");/*recordar cambiar nombre para que diferencie todo*/
             pw = new PrintWriter(fichero);
             //comenzamos a escribir el html
             pw.println("<html>");
@@ -425,7 +512,6 @@ public class FrameP extends javax.swing.JFrame {
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton6;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;

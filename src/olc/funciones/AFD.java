@@ -139,36 +139,40 @@ public class AFD {
         return flag;
     }
     
-    public void validar(String cadena){
+    public String validar(String cadena){
         try{
             String actual = this.estados.get(this.inicial);
-        boolean charValido = false;
-        List<String> reducidos = reducir();
-        List<String> llave = new ArrayList<String>();
-        llave.add(actual); llave.add("");
+            boolean charValido = false;
+            List<String> reducidos = reducir();
+            List<String> llave = new ArrayList<String>();
+            llave.add(actual); llave.add("");
         
-        for(int i = 0; i < cadena.length(); i++){
-            String transi = charIn(cadena.charAt(i),reducidos);
-            llave.set(1, transi);
-            if(this.transiciones.containsKey(llave)){
-                actual = this.transiciones.get(llave);
-                llave.set(0, actual);
-                charValido = true;
-            }else{
-                charValido = false;
-                break;
-            }
+            for(int i = 0; i < cadena.length(); i++){
+                String transi = charIn(cadena.charAt(i),reducidos);
+                llave.set(1, transi);
+                if(this.transiciones.containsKey(llave)){
+                    actual = this.transiciones.get(llave);
+                    llave.set(0, actual);
+                    charValido = true;
+                }else{
+                    charValido = false;
+                    break;
+                }
             
-        }
-        if(charValido && this.aceptacion.contains(actual)){
+            }
+            if(charValido && this.aceptacion.contains(actual)){
             //denotar como aprobada
-            System.out.println(cadena + " aprobada");
-        }else{
+                System.out.println(cadena + " aprobada");
+                return "Cadena Valida";
+            }else{
             //denotar como fallida
-            System.out.println(cadena + " reprobada");
-        }
+                System.out.println(cadena + " reprobada");
+                return "Cadena Invalida";
+            }
         }catch(Exception e){
             e.printStackTrace();
+            System.out.println("por aqui es el nullPointer");
+            return "error";
         }
     }
 }

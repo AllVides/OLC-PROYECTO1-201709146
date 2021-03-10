@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import olc.analizadores.parser;
 import olc.funciones.Nodo;
 
 /**
@@ -114,8 +115,15 @@ public class Arbol {
         return etiqueta;
     }
     
-    public void evaluar(String cadena){
-        this.auto.validar(cadena);
+    public String evaluar(String cadena, String nombre){
+        String retorno="\t{\n"
+                + "\t\t\"Valor\":\""+cadena+"\"\n"
+                + "\t\t\"ExpresionRegular\":\""+nombre+"\"\n"
+                + "\t\t\"Resultado\":\""+this.auto.validar(cadena)+"\"\n"
+                + "\t}\n";
+                
+        
+        return retorno;
     }
 }
 
