@@ -41,7 +41,7 @@ public class Arbol {
     public String Automata(){
         Map<String, String> map = new TreeMap<String, String>(this.map);
         Map<String, List<String>> tablasig = new TreeMap<String, List<String>>(this.tablasig);
-        this.auto = new AFD(tablasig, map, this.raiz.primeros, this.raiz.hder.leafid);
+        this.auto = new AFD(tablasig, map, this.raiz.primeros, String.valueOf(this.raiz.hder.id));
         this.auto.createState();
         this.auto.createTrans();
         return this.auto.printTabla();

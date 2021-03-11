@@ -297,7 +297,7 @@ public class FrameP extends javax.swing.JFrame {
             try{
                 for (Map.Entry<String, Arbol> entry : sintaxis.map.entrySet()) {
                     try{
-                        log+="PARA EXPRESION: "+entry.getKey();
+                        log+="PARA EXPRESION: "+entry.getKey()+"\n";
                         String acto = entry.getValue().raiz.getCodigoInterno();
                         graficar(acto,"OUTPUT/ARBOLES_201709146/"+entry.getKey());
                         log += "arboles creados exitosamente\n";

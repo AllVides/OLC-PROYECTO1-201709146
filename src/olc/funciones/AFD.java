@@ -40,7 +40,7 @@ public class AFD {
             if (!this.estados.containsKey(estado.getValue())){
                 if(!(estado.getKey() == this.ultimo)){
                     this.estados.put(estado.getValue(),s+contador);
-                    if(!estado.getValue().contains(this.ultimo)){
+                    if(estado.getValue().contains(this.ultimo)){
                         this.aceptacion.add(this.estados.get(estado.getValue()));
                     }
                     contador++;

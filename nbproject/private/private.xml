@@ -5,10 +5,10 @@
         <group>
             <file>file:/C:/Users/Lenovo/source/repos/OLC-PROYECTO1-201709146/src/olc/funciones/Arbol.java</file>
             <file>file:/C:/Users/Lenovo/source/repos/OLC-PROYECTO1-201709146/src/olc/analizadores/sintaxis.cup</file>
-            <file>file:/C:/Users/Lenovo/source/repos/OLC-PROYECTO1-201709146/src/olc/analizadores/InitAnalizador.java</file>
             <file>file:/C:/Users/Lenovo/source/repos/OLC-PROYECTO1-201709146/src/olc/funciones/AFD.java</file>
             <file>file:/C:/Users/Lenovo/source/repos/OLC-PROYECTO1-201709146/src/olc/GUI/FrameP.java</file>
             <file>file:/C:/Users/Lenovo/source/repos/OLC-PROYECTO1-201709146/src/olc/main/Main.java</file>
+            <file>file:/C:/Users/Lenovo/source/repos/OLC-PROYECTO1-201709146/src/olc/analizadores/lexico.jflex</file>
         </group>
     </open-files>
 </project-private>

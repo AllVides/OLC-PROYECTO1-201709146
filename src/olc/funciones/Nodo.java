@@ -20,7 +20,6 @@ public class Nodo {
     public List<String> ultimos = new ArrayList<String>();
     public List<String> primeros = new ArrayList<String>();
     public String nulable;
-    public String leafid = "";
     public int id;
     
     public Nodo(Nodo hizq, Nodo hder, String valor, int id){
