@@ -308,8 +308,11 @@ public class FrameP extends javax.swing.JFrame {
                         graficar(acto, "OUTPUT/TRANSICIONES_201709146/"+entry.getKey());
                         log += "tabla transiciones creada exitosamente\n";
                         acto = entry.getValue().afd();
-                        graficar(acto, "OUTPUT/AFD_201709146/"+entry.getKey());
+                        graficarAutomata(acto, "OUTPUT/AFD_201709146/"+entry.getKey());
                         log += "AFD's creados exitosamente\n";
+                        acto = entry.getValue().AFND();
+                        graficarAutomata(acto, "OUTPUT/AFND_201709146/"+entry.getKey());
+                        log += "AFND's creados exitosamente\n";
                         generarHTML();
                         log += "reporte de errores creado exitosamente\n";
                         try{
@@ -344,6 +347,9 @@ public class FrameP extends javax.swing.JFrame {
     public void printJSON(String acto) throws IOException{
         FileWriter fichero = null;
         PrintWriter pw = null;
+        if(acto.length() > 0){
+            acto = acto.substring(0, acto.length() - 1);
+        }
         try {
             fichero = new FileWriter("../OUTPUT/SALIDAS_201709146/salida_"+this.name+".json");/*recordar cambiar nombre para que diferencie todo*/
             pw = new PrintWriter(fichero);
@@ -428,11 +434,39 @@ public class FrameP extends javax.swing.JFrame {
 		pbuilder.redirectErrorStream( true );			//Ejecuta el proceso
 		pbuilder.start();
 		    
+	} catch (Exception e) { e.printStackTrace(); } 
+    }
+    
+    public void graficarAutomata(String act, String nombre){
+        FileWriter fichero = null;
+        PrintWriter pw = null;
+        try {
+            fichero = new FileWriter("../" + nombre + ".dot");
+            pw = new PrintWriter(fichero);
+            pw.println("digraph G{");
+            pw.println("rankdir=LR");
+            pw.println("node[shape=circle]");
+            pw.println("concentrate=true");
+            pw.println(act);
+            pw.println("}");
+        } catch (Exception e) {
+            System.out.println("error, no se realizo el archivo");
+        } finally {
+            try {
+                if (null != fichero) {
+                    fichero.close();
+                }
+            } catch (Exception e2) {
+                e2.printStackTrace();
+            }
+        }
+        try{       
+            ProcessBuilder pbuilder;
+		pbuilder = new ProcessBuilder( "dot", "-Tpng", "-o", "../" + nombre + ".png", "../" + nombre + ".dot" );
+		pbuilder.redirectErrorStream( true );			//Ejecuta el proceso
+		pbuilder.start();
+		    
 	} catch (Exception e) { e.printStackTrace(); }
-        
-        
-       
-         
     }
     
     public void checkDir(){

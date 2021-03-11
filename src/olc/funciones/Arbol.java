@@ -22,6 +22,7 @@ public class Arbol {
     public Map<String, List<String>> tablasig= new HashMap<String, List<String>>();
     public Map<String, String> map = new HashMap<String, String>();
     public AFD auto;
+    public int contador = 0;
     
     public Arbol (){
     }
@@ -117,14 +118,101 @@ public class Arbol {
     
     public String evaluar(String cadena, String nombre){
         String retorno="\t{\n"
-                + "\t\t\"Valor\":\""+cadena+"\"\n"
-                + "\t\t\"ExpresionRegular\":\""+nombre+"\"\n"
+                + "\t\t\"Valor\":\""+cadena+"\",\n"
+                + "\t\t\"ExpresionRegular\":\""+nombre+"\",\n"
                 + "\t\t\"Resultado\":\""+this.auto.validar(cadena)+"\"\n"
-                + "\t}\n";
+                + "\t},\n";
                 
         
         return retorno;
     }
+    
+    public String AFND(){
+        String cont = "";
+        int primero = this.contador;
+        contador++;
+        int ultimo = this.contador;
+        contador++;
+        cont += primero+"[label=\""+primero+"\"];\n";
+        cont += ultimo+"[shape=doublecircle label=\""+ultimo+"\"];\n";
+        return AFND(this.raiz, primero, ultimo);
+    }
+    
+    public String AFND(Nodo raiz, int primero, int ultimo){
+        String con = "";
+        if(raiz.hizq == null && raiz.hder == null){
+            return primero +"->"+ultimo+"[label=\""+raiz.valor+"\"];\n";
+        }
+        
+        if(raiz.valor == "."){
+            int medio = this.contador;
+            this.contador++;
+            con += medio+"[label=\""+medio+"\"];\n";
+            if(raiz.hizq !=null){
+                con += AFND(raiz.hizq, primero, medio);
+            }
+            if(raiz.hder !=null){
+                con += AFND(raiz.hder, medio, ultimo);
+            }
+            
+        }else if(raiz.valor == "|"){
+            int arriba1 = this.contador; this.contador++;
+            int arriba2 = this.contador; this.contador++;
+            int abajo1 = this.contador; this.contador++;
+            int abajo2 = this.contador; this.contador++;
+            
+            con += arriba1+"[label=\""+arriba1+"\"];\n";
+            con += arriba2+"[label=\""+arriba2+"\"];\n";
+            con += abajo1+"[label=\""+abajo1+"\"];\n";
+            con += abajo2+"[label=\""+abajo2+"\"];\n";
+            
+            con += primero+"->"+arriba1+"[label=\"vacio\"];\n";
+            con += primero+"->"+abajo1+"[label=\"vacio\"];\n";
+            con += arriba2+"->"+ultimo+"[label=\"vacio\"];\n";
+            con += abajo2+"->"+ultimo+"[label=\"vacio\"];\n";
+            
+            con += AFND(raiz.hizq, arriba1, arriba2);
+            con += AFND(raiz.hder, abajo1, abajo2);
+            
+        }else if(raiz.valor == "?"){
+            int medio1 = this.contador; this.contador++;
+            int medio2 = this.contador; this.contador++;
+            
+            con += medio1+"[label=\""+medio1+"\"];\n";
+            con += medio2+"[label=\""+medio2+"\"];\n";
+            
+            con += primero+"->"+medio1+"[label=\"vacio\"];\n";
+            con += medio2+"->"+ultimo+"[label=\"vacio\"];\n";
+
+            con += AFND(raiz.hizq, medio1, medio2);
+        }else if(raiz.valor == "*"){
+            int medio1 = this.contador; this.contador++;
+            int medio2 = this.contador; this.contador++;
+            
+            con += medio1+"[label=\""+medio1+"\"];\n";
+            con += medio2+"[label=\""+medio2+"\"];\n";
+            
+            con += primero+"->"+ultimo+"[label=\"vacio\"];\n";
+            con += primero+"->"+medio1+"[label=\"vacio\"];\n";
+            con += medio2+"->"+ultimo+"[label=\"vacio\"];\n";
+            con += medio2+"->"+medio1+"[label=\"vacio\"];\n"; 
+            con += AFND(raiz.hizq, medio1, medio2);
+            
+        }else if(raiz.valor == "+"){  
+            int medio1 = this.contador; this.contador++;
+            int medio2 = this.contador; this.contador++;
+            
+            con += medio1+"[label=\""+medio1+"\"];\n";
+            con += medio2+"[label=\""+medio2+"\"];\n";
+            
+            con += primero+"->"+medio1+"[label=\"vacio\"];\n";
+            con += medio2+"->"+ultimo+"[label=\"vacio\"];\n";
+            con += medio2+"->"+medio1+"[label=\"vacio\"];\n"; 
+            con += AFND(raiz.hizq, medio1, medio2);
+        }
+        return con;
+    }
+    
 }
 
 
